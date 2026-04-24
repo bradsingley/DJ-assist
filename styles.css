@@ -208,6 +208,30 @@ thead th {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+thead th[data-sort] { cursor: pointer; -webkit-user-select: none; user-select: none; }
+thead th[data-sort]:hover { color: var(--text); }
+thead th[data-sort]::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 6px;
+  vertical-align: middle;
+  opacity: 0.35;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+}
+thead th.sort-asc::after {
+  border-top: 0;
+  border-bottom: 5px solid currentColor;
+  opacity: 1;
+  color: var(--accent);
+}
+thead th.sort-desc::after {
+  opacity: 1;
+  color: var(--accent);
+}
 .col-resizer {
   position: absolute;
   top: 0;

@@ -2,7 +2,25 @@
 const state = {
   tracks: [],
   filter: { q: "", tempo: "all", genre: "all", era: "all", playedOnly: false },
-  sort: "popularity",
+  sort: { key: "popularity", dir: "desc" },
+};
+
+// dropdown value <-> {key, dir}
+const SORT_OPTIONS = {
+  popularity:  { key: "popularity",  dir: "desc" },
+  dance_plays: { key: "dance_plays", dir: "desc" },
+  bpm_asc:     { key: "bpm",         dir: "asc"  },
+  bpm_desc:    { key: "bpm",         dir: "desc" },
+  year_desc:   { key: "year",        dir: "desc" },
+  year_asc:    { key: "year",        dir: "asc"  },
+  title:       { key: "title",       dir: "asc"  },
+  artist:      { key: "artist",      dir: "asc"  },
+};
+
+// default direction when clicking a header column
+const DEFAULT_DIR = {
+  popularity: "desc", dance_plays: "desc", bpm: "desc", year: "desc",
+  title: "asc", artist: "asc", genre: "asc", tempo: "asc",
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -39,7 +57,8 @@ function populateEraFilter() {
   const sorted = [...eras].sort();
   const box = byId("era-chips");
   for (const e of sorted) {
-    const btn = document.createElement("button");
+    const opt = SORT_OPTIONS[e.target.value];
+    if (opt) state.sort = { ...opt }Element("button");
     btn.className = "chip";
     btn.dataset.value = e;
     btn.textContent = e;
@@ -79,8 +98,7 @@ function bind() {
   }
 
   byId("reset").addEventListener("click", () => {
-    state.filter = { q: "", tempo: "all", genre: "all", era: "all", playedOnly: false };
-    state.sort = "popularity";
+    state.filter { key: "popularity", dir: "desc" };
     byId("search").value = "";
     byId("genre").value = "all";
     byId("sort").value = "popularity";
@@ -91,27 +109,56 @@ function bind() {
     }
     render();
   });
+
+  // click column headers to sort
+  document.querySelectorAll("#tracks thead th[data-sort]").forEach((th) => {
+    th.addEventListener("click", () => {
+      const key = th.dataset.sort;
+      if (state.sort.key === key) {
+        state.sort.dir = state.sort.dir === "asc" ? "desc" : "asc";
+      } else {
+        state.sort = { key, dir: DEFAULT_DIR[key] || "asc" };
+      }
+      render();
+    }
+    render();
+  });
 }
 
 function applyFilters() {
   const { q, tempo, genre, era, playedOnly } = state.filter;
-  return state.tracks.filter((t) => {
-    if (tempo !== "all" && t.tempo !== tempo) return false;
-    if (genre !== "all" && t.genre !== genre) return false;
-    if (era !== "all" && t.era !== era) return false;
-    if (playedOnly && !(t.dance_plays > 0)) return false;
-    if (q) {
-      const hay = `${t.name} ${t.artist}`.toLowerCase();
-      if (!hay.includes(q)) return false;
-    }
-    return true;
-  });
+  return{ key, dir } = state.sort;
+  const sign = dir === "asc" ? 1 : -1;
+  const copy = list.slice();
+  const textKeys = { title: "name", artist: "artist", genre: "genre", tempo: "tempo" };
+  if (textKeys[key]) {
+    const field = textKeys[key];
+    copy.sort((a, b) => (a[field] || "").localeCompare(b[field] || "") * sign);
+  } else {
+    copy.sort((a, b) => {
+      const av = a[key] ?? -Infinity, bv = b[key] ?? -Infinity;
+      return (av - bv) * sign;
+    });
+  }
+  return copy;
 }
 
-function applySort(list) {
-  const s = state.sort;
-  const copy = list.slice();
-  const byNum = (k, dir = -1) => (a, b) => {
+function syncSortUI() {
+  // dropdown: pick matching option if any, else show empty (popularity fallback visual)
+  const dropdown = byId("sort");
+  if (dropdown) {
+    const match = Object.entries(SORT_OPTIONS).find(
+      ([, v]) => v.key === state.sort.key && v.dir === state.sort.dir
+    );
+    dropdown.value = match ? match[0] : "";
+  }
+  // header indicators
+  document.querySelectorAll("#tracks thead th[data-sort]").forEach((th) => {
+    th.classList.remove("sort-asc", "sort-desc");
+    if (th.dataset.sort === state.sort.key) {
+      th.classList.add(state.sort.dir === "asc" ? "sort-asc" : "sort-desc");
+    }
+  }) = (k, dir = -1) => (a, b) => {
     const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
     return (av - bv) * dir;
   };
@@ -129,6 +176,7 @@ function applySort(list) {
 }
 
 function render() {
+  syncSortUI();
   const filtered = applySort(applyFilters());
   byId("count").textContent = `${filtered.length.toLocaleString()} tracks`;
   const tbody = document.querySelector("#tracks tbody");
