@@ -57,8 +57,7 @@ function populateEraFilter() {
   const sorted = [...eras].sort();
   const box = byId("era-chips");
   for (const e of sorted) {
-    const opt = SORT_OPTIONS[e.target.value];
-    if (opt) state.sort = { ...opt }Element("button");
+    const btn = document.createElement("button");
     btn.className = "chip";
     btn.dataset.value = e;
     btn.textContent = e;
@@ -76,7 +75,8 @@ function bind() {
     render();
   });
   byId("sort").addEventListener("change", (e) => {
-    state.sort = e.target.value;
+    const opt = SORT_OPTIONS[e.target.value];
+    if (opt) state.sort = { ...opt };
     render();
   });
   byId("played-only").addEventListener("change", (e) => {
@@ -98,7 +98,8 @@ function bind() {
   }
 
   byId("reset").addEventListener("click", () => {
-    state.filter { key: "popularity", dir: "desc" };
+    state.filter = { q: "", tempo: "all", genre: "all", era: "all", playedOnly: false };
+    state.sort = { key: "popularity", dir: "desc" };
     byId("search").value = "";
     byId("genre").value = "all";
     byId("sort").value = "popularity";
@@ -120,14 +121,27 @@ function bind() {
         state.sort = { key, dir: DEFAULT_DIR[key] || "asc" };
       }
       render();
-    }
-    render();
+    });
   });
 }
 
 function applyFilters() {
   const { q, tempo, genre, era, playedOnly } = state.filter;
-  return{ key, dir } = state.sort;
+  return state.tracks.filter((t) => {
+    if (tempo !== "all" && t.tempo !== tempo) return false;
+    if (genre !== "all" && t.genre !== genre) return false;
+    if (era !== "all" && t.era !== era) return false;
+    if (playedOnly && !(t.dance_plays > 0)) return false;
+    if (q) {
+      const hay = `${t.name} ${t.artist}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function applySort(list) {
+  const { key, dir } = state.sort;
   const sign = dir === "asc" ? 1 : -1;
   const copy = list.slice();
   const textKeys = { title: "name", artist: "artist", genre: "genre", tempo: "tempo" };
@@ -144,7 +158,6 @@ function applyFilters() {
 }
 
 function syncSortUI() {
-  // dropdown: pick matching option if any, else show empty (popularity fallback visual)
   const dropdown = byId("sort");
   if (dropdown) {
     const match = Object.entries(SORT_OPTIONS).find(
@@ -152,27 +165,12 @@ function syncSortUI() {
     );
     dropdown.value = match ? match[0] : "";
   }
-  // header indicators
   document.querySelectorAll("#tracks thead th[data-sort]").forEach((th) => {
     th.classList.remove("sort-asc", "sort-desc");
     if (th.dataset.sort === state.sort.key) {
       th.classList.add(state.sort.dir === "asc" ? "sort-asc" : "sort-desc");
     }
-  }) = (k, dir = -1) => (a, b) => {
-    const av = a[k] ?? -Infinity, bv = b[k] ?? -Infinity;
-    return (av - bv) * dir;
-  };
-  switch (s) {
-    case "popularity":  copy.sort(byNum("popularity", -1)); break;
-    case "dance_plays": copy.sort(byNum("dance_plays", -1)); break;
-    case "bpm_asc":     copy.sort(byNum("bpm", 1)); break;
-    case "bpm_desc":    copy.sort(byNum("bpm", -1)); break;
-    case "year_desc":   copy.sort(byNum("year", -1)); break;
-    case "year_asc":    copy.sort(byNum("year", 1)); break;
-    case "title":       copy.sort((a, b) => a.name.localeCompare(b.name)); break;
-    case "artist":      copy.sort((a, b) => (a.artist || "").localeCompare(b.artist || "")); break;
-  }
-  return copy;
+  });
 }
 
 function render() {
