@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 RAW = ROOT / "raw data"
 XML = RAW / "MusicLibrary.xml"
-OUT = ROOT / "web" / "tracks.json"
+OUT = ROOT / "tracks.json"
 
 
 # ---------- normalization helpers ----------

@@ -6,8 +6,8 @@ by **tempo**, **genre**, **era**, and **dance-floor popularity**.
 ## What's included
 
 - [build.py](build.py) — parses `raw data/MusicLibrary.xml` and all
-  `raw data/DJ Set*.csv` exports into [web/tracks.json](web/tracks.json).
-- [web/index.html](web/index.html) + [web/app.js](web/app.js) + [web/styles.css](web/styles.css) — the site.
+  `raw data/DJ Set*.csv` exports into [tracks.json](tracks.json).
+- [index.html](index.html) + [app.js](app.js) + [styles.css](styles.css) — the site.
 
 ## How popularity is computed
 
@@ -37,7 +37,6 @@ Tracks also get a `dance_plays` field you can sort on directly.
 ## Run
 
 ```bash
-python3 build.py               # regenerate web/tracks.json
-cd web && python3 -m http.server 8000
-# open http://localhost:8000
+python3 build.py               # regenerate tracks.json
+python3 -m http.server 8000    # then open http://localhost:8000
 ```
