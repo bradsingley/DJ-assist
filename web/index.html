@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DJ Assist — Youth Dance Library</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>DJ Assist</h1>
+      <p class="tagline">Filter the youth-dance library by tempo, genre, era &amp; dance-floor popularity.</p>
+    </div>
+    <div class="stats" id="stats">Loading…</div>
+  </header>
+
+  <main>
+    <aside class="filters">
+      <div class="filter-group">
+        <label for="search">Search</label>
+        <input id="search" type="search" placeholder="title or artist…" autocomplete="off" />
+      </div>
+
+      <div class="filter-group">
+        <label>Tempo</label>
+        <div class="chips" id="tempo-chips">
+          <button class="chip active" data-value="all">All</button>
+          <button class="chip" data-value="fast">Fast</button>
+          <button class="chip" data-value="mid">Mid</button>
+          <button class="chip" data-value="slow">Slow</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label for="genre">Genre</label>
+        <select id="genre"><option value="all">All genres</option></select>
+      </div>
+
+      <div class="filter-group">
+        <label>Era</label>
+        <div class="chips" id="era-chips">
+          <button class="chip active" data-value="all">All</button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label class="check"><input type="checkbox" id="played-only" /> Only songs played at past dances</label>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort">Sort by</label>
+        <select id="sort">
+          <option value="popularity">Dance popularity (high → low)</option>
+          <option value="dance_plays">Times played at dances</option>
+          <option value="bpm_asc">BPM (low → high)</option>
+          <option value="bpm_desc">BPM (high → low)</option>
+          <option value="year_desc">Year (newest)</option>
+          <option value="year_asc">Year (oldest)</option>
+          <option value="title">Title (A–Z)</option>
+          <option value="artist">Artist (A–Z)</option>
+        </select>
+      </div>
+
+      <button id="reset" class="reset">Reset filters</button>
+      <p class="note">
+        Popularity is derived from your saved DJ set history (how often each
+        track actually got played at past dances), blended with loved/rating
+        signals in the library.
+      </p>
+    </aside>
+
+    <section class="results">
+      <div class="results-header">
+        <span id="count">0 tracks</span>
+      </div>
+      <div class="table-wrap">
+        <table id="tracks">
+          <colgroup>
+            <col class="c-rank" />
+            <col class="c-pop" />
+            <col class="c-title" />
+            <col class="c-artist" />
+            <col class="c-genre" />
+            <col class="c-era" />
+            <col class="c-bpm" />
+            <col class="c-tempo" />
+            <col class="c-plays" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="rank">#</th>
+              <th class="num">Popularity</th>
+              <th>Title</th>
+              <th>Artist</th>
+              <th>Genre</th>
+              <th>Era</th>
+              <th class="num">BPM</th>
+              <th>Tempo</th>
+              <th class="num">Dance plays</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

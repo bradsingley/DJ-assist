@@ -1,0 +1,17 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (just in case)
+node_modules/
+
+# Local server artifacts
+*.log
