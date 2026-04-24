@@ -54,8 +54,59 @@ main {
   align-items: start;
 }
 
+/* Floating toggle button — hidden on desktop, visible on mobile */
+.filter-toggle {
+  display: none;
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  z-index: 50;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  color: #0b0d11;
+  border: none;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.filter-toggle:hover { filter: brightness(1.05); }
+.filter-toggle-icon { font-size: 18px; line-height: 1; }
+
 @media (max-width: 860px) {
   main { grid-template-columns: 1fr; }
+
+  .filter-toggle { display: inline-flex; }
+
+  .filters {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    z-index: 40;
+    max-height: 75vh;
+    overflow-y: auto;
+    border-radius: 16px 16px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+  }
+  .filters.open { transform: translateY(0); }
+
+  /* Keep toggle above the open panel, shifted so it stays tappable */
+  .filters.open ~ .filter-toggle,
+  body.filters-open .filter-toggle {
+    bottom: auto;
+    top: 12px;
+    left: 12px;
+  }
 }
 
 .filters {

@@ -173,6 +173,23 @@ function escapeHtml(s) {
   }[c]));
 }
 
+function initFilterToggle() {
+  const btn = document.getElementById("filter-toggle");
+  const panel = document.getElementById("filters");
+  if (!btn || !panel) return;
+  const label = btn.querySelector(".filter-toggle-label");
+  const setOpen = (open) => {
+    panel.classList.toggle("open", open);
+    document.body.classList.toggle("filters-open", open);
+    btn.setAttribute("aria-expanded", String(open));
+    if (label) label.textContent = open ? "Close" : "Filters";
+  };
+  btn.addEventListener("click", () => setOpen(!panel.classList.contains("open")));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && panel.classList.contains("open")) setOpen(false);
+  });
+}
+
 function initResizers() {
   const table = document.getElementById("tracks");
   const cols = table.querySelectorAll("colgroup col");
@@ -222,6 +239,7 @@ function initResizers() {
 
 bind();
 initResizers();
+initFilterToggle();
 load().catch((err) => {
   byId("stats").textContent = "Error loading tracks.json";
   console.error(err);

@@ -15,8 +15,13 @@
     <div class="stats" id="stats">Loading…</div>
   </header>
 
+  <button id="filter-toggle" class="filter-toggle" aria-expanded="false" aria-controls="filters">
+    <span class="filter-toggle-icon" aria-hidden="true">≡</span>
+    <span class="filter-toggle-label">Filters</span>
+  </button>
+
   <main>
-    <aside class="filters">
+    <aside class="filters" id="filters">
       <div class="filter-group">
         <label for="search">Search</label>
         <input id="search" type="search" placeholder="title or artist…" autocomplete="off" />
