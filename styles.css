@@ -78,7 +78,22 @@ main {
 .filter-toggle-icon { font-size: 18px; line-height: 1; }
 
 @media (max-width: 860px) {
-  main { grid-template-columns: 1fr; }
+  main {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+  }
+  .topbar { padding: 14px 14px 12px; flex-wrap: wrap; gap: 4px 12px; }
+  .brand h1 { font-size: 20px; }
+  .tagline { font-size: 12px; }
+
+  /* Let the page itself scroll on mobile — no inner clipped container */
+  .table-wrap {
+    max-height: none;
+    overflow-y: visible;
+  }
+  /* Give the floating toggle room so it doesn't cover the last row */
+  .results { padding-bottom: 72px; }
 
   .filter-toggle { display: inline-flex; }
 
@@ -100,7 +115,6 @@ main {
   }
   .filters.open { transform: translateY(0); }
 
-  /* Keep toggle above the open panel, shifted so it stays tappable */
   .filters.open ~ .filter-toggle,
   body.filters-open .filter-toggle {
     bottom: auto;
